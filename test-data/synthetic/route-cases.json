@@ -1,0 +1,192 @@
+{
+  "source": "fixture",
+  "note": "Synthetic target expectations; not executed matching tests. Thresholds TBD.",
+  "cases": [
+    {
+      "name": "same_direction_overlap",
+      "historical_trip_id": "fixture-trip-001",
+      "current_trip_id": "fixture-trip-002",
+      "points": [
+        {
+          "seq": 0,
+          "elapsed_ms": 0,
+          "lat": 37.0,
+          "lon": 127.0,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 1,
+          "elapsed_ms": 10000,
+          "lat": 37.0,
+          "lon": 127.001,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 2,
+          "elapsed_ms": 20000,
+          "lat": 37.0,
+          "lon": 127.002,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 3,
+          "elapsed_ms": 30000,
+          "lat": 37.0,
+          "lon": 127.003,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 4,
+          "elapsed_ms": 40000,
+          "lat": 37.0,
+          "lon": 127.004,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 5,
+          "elapsed_ms": 50000,
+          "lat": 37.0,
+          "lon": 127.005,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 6,
+          "elapsed_ms": 60000,
+          "lat": 37.0,
+          "lon": 127.006,
+          "accuracy_m": 5.0
+        }
+      ],
+      "expected": "match_after_threshold_validation"
+    },
+    {
+      "name": "reverse_direction",
+      "historical_trip_id": "fixture-trip-001",
+      "current_trip_id": "fixture-trip-002",
+      "points": [
+        {
+          "seq": 0,
+          "elapsed_ms": 0,
+          "lat": 37.0,
+          "lon": 127.006,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 1,
+          "elapsed_ms": 10000,
+          "lat": 37.0,
+          "lon": 127.005,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 2,
+          "elapsed_ms": 20000,
+          "lat": 37.0,
+          "lon": 127.004,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 3,
+          "elapsed_ms": 30000,
+          "lat": 37.0,
+          "lon": 127.003,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 4,
+          "elapsed_ms": 40000,
+          "lat": 37.0,
+          "lon": 127.002,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 5,
+          "elapsed_ms": 50000,
+          "lat": 37.0,
+          "lon": 127.001,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 6,
+          "elapsed_ms": 60000,
+          "lat": 37.0,
+          "lon": 127.0,
+          "accuracy_m": 5.0
+        }
+      ],
+      "expected": "no_match"
+    },
+    {
+      "name": "single_near_point",
+      "historical_trip_id": "fixture-trip-001",
+      "current_trip_id": "fixture-trip-002",
+      "points": [
+        {
+          "seq": 0,
+          "elapsed_ms": 0,
+          "lat": 37.0,
+          "lon": 127.0,
+          "accuracy_m": 5.0
+        }
+      ],
+      "expected": "no_match"
+    },
+    {
+      "name": "same_trip_excluded",
+      "historical_trip_id": "fixture-trip-001",
+      "current_trip_id": "fixture-trip-001",
+      "points": [
+        {
+          "seq": 0,
+          "elapsed_ms": 0,
+          "lat": 37.0,
+          "lon": 127.0,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 1,
+          "elapsed_ms": 10000,
+          "lat": 37.0,
+          "lon": 127.001,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 2,
+          "elapsed_ms": 20000,
+          "lat": 37.0,
+          "lon": 127.002,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 3,
+          "elapsed_ms": 30000,
+          "lat": 37.0,
+          "lon": 127.003,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 4,
+          "elapsed_ms": 40000,
+          "lat": 37.0,
+          "lon": 127.004,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 5,
+          "elapsed_ms": 50000,
+          "lat": 37.0,
+          "lon": 127.005,
+          "accuracy_m": 5.0
+        },
+        {
+          "seq": 6,
+          "elapsed_ms": 60000,
+          "lat": 37.0,
+          "lon": 127.006,
+          "accuracy_m": 5.0
+        }
+      ],
+      "expected": "no_match"
+    }
+  ]
+}

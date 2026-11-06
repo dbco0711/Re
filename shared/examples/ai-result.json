@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.1",
+  "memo_id": "fixture-memo-001",
+  "processing_source": "fixture",
+  "transcript": "가상의 드라이브 메모입니다. 산책하러 가는 길이에요.",
+  "summary": "산책하러 가는 길의 가상 메모",
+  "travel_purpose": "산책",
+  "keywords": [
+    "산책"
+  ],
+  "provider": null,
+  "model": null
+}

@@ -42,3 +42,11 @@ python -m venv .venv
 
 공식 사이트: https://appdevchallenge.auto-hmg.io/ · Pleos 문서: https://document.pleos.ai/
 공모전 일정·제출 조건·SDK 지원 및 권한은 개발·제출 전에 공식 자료로 재확인합니다. 과거 확인 내용은 현재 검증 결과가 아닙니다.
+
+## 팀원 전달 문서
+
+[처음 시작하기](docs/START-HERE.md)에서 MVP·계약·역할별 안내·협업 규칙을 순서대로 확인합니다. 계약 v0.1은 초안이며 예정 API는 아직 구현되지 않았습니다.
+
+## 자료를 못 찾겠다면
+
+[00-자료목차.md](00-자료목차.md)를 먼저 열어 주세요. GitHub 처음 사용자를 위한 설치·받기·PR 실습도 연결되어 있습니다.

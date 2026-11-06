@@ -1,0 +1,10 @@
+{
+  "source": "fixture",
+  "processing_source": "fixture",
+  "is_demo": true,
+  "title": "길 위의 기억 — 연결 확인",
+  "summary": "화면 연결을 확인하기 위한 가상 카드입니다.",
+  "recorded_at": "2026-01-01T00:00:00Z",
+  "trip_id": "fixture-trip-001",
+  "notice": "실제 녹음·GPS·AI 처리 결과가 아닙니다."
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1",
+  "memo_id": "fixture-memo-001",
+  "trip_id": "fixture-trip-001",
+  "consent": true,
+  "start_elapsed_ms": 10000,
+  "end_elapsed_ms": 30000,
+  "recorded_at": "2026-01-01T00:00:10Z",
+  "processing_source": "fixture"
+}

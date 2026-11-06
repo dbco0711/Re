@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": "INVALID_TIME_RANGE",
+    "message": "메모 종료 시각이 시작 시각보다 늦어야 합니다.",
+    "retryable": false
+  },
+  "source": "fixture"
+}
