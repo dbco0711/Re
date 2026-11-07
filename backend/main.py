@@ -1,4 +1,4 @@
-"""Local connection check only; no GPS, audio, database or AI processing."""
+"""Local starter: trip persistence and connection checks. Actual AI and matching pending."""
 from fastapi import FastAPI
 
 app = FastAPI(title="Re — 길 위의 기억", version="0.1.0")
@@ -21,3 +21,7 @@ def demo_card():
         "trip_id": "fixture-trip-001",
         "notice": "실제 녹음·GPS·AI 처리 결과가 아닙니다.",
     }
+
+
+from backend.routes.trips import router as trips_router
+app.include_router(trips_router)
