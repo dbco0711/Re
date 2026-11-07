@@ -6,7 +6,7 @@ if not exist ".venv\Scripts\python.exe" (
   pause
   exit /b 1
 )
-".venv\Scripts\python.exe" tools	eam_env.py start
+".venv\Scripts\python.exe" "%~dp0tools/team_env.py" start
 if errorlevel 1 (
   echo.
   echo Server failed. Copy the error above and send it to B.

@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul
 cd /d "%~dp0"
-python tools	eam_env.py setup
+python "%~dp0tools/team_env.py" setup
 if errorlevel 1 (
   echo.
   echo Setup failed. Copy the error above and send it to B.

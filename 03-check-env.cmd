@@ -6,5 +6,5 @@ if not exist ".venv\Scripts\python.exe" (
   pause
   exit /b 1
 )
-".venv\Scripts\python.exe" tools	eam_env.py check
+".venv\Scripts\python.exe" "%~dp0tools/team_env.py" check
 pause
