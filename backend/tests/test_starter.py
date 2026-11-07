@@ -27,7 +27,7 @@ class StarterTests(unittest.TestCase):
         self.assertIsNone(analyze_manual("m","text")["summary"])
         with self.assertRaises(ValueError): analyze_manual("m","")
         self.assertFalse(compare_routes("a","a",[1,2],[1,2])["matched"])
-        self.assertIsNone(compare_routes("a","b",[1,2],[1,2])["matched"])
+        self.assertFalse(compare_routes("a","b",[],[])["matched"])
 
     def test_validation(self):
         with self.assertRaises(ValueError): GPSPoint(seq=0,elapsed_ms=0,lat=91,lon=0)

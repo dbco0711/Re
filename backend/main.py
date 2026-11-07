@@ -1,4 +1,4 @@
-"""Local starter: trip persistence and connection checks. Actual AI and matching pending."""
+"""Local backend: trip and memo persistence, consent, and provisional route matching."""
 from fastapi import FastAPI
 
 app = FastAPI(title="Re — 길 위의 기억", version="0.1.0")
@@ -25,3 +25,6 @@ def demo_card():
 
 from backend.routes.trips import router as trips_router
 app.include_router(trips_router)
+
+from backend.routes.memos import router as memos_router
+app.include_router(memos_router)

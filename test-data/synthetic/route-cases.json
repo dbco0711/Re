@@ -1,6 +1,6 @@
 {
   "source": "fixture",
-  "note": "Synthetic target expectations; not executed matching tests. Thresholds TBD.",
+  "note": "Synthetic expectations; matching tests now exercise these scenario classes. Real-road calibration pending.",
   "cases": [
     {
       "name": "same_direction_overlap",
@@ -57,7 +57,7 @@
           "accuracy_m": 5.0
         }
       ],
-      "expected": "match_after_threshold_validation"
+      "expected": "match_with_provisional_thresholds"
     },
     {
       "name": "reverse_direction",

@@ -4,7 +4,7 @@
 
 ## 현재 상태
 
-초기 공동 세팅과 로컬 서버 연결 확인 단계입니다. Android 앱, Pleos SDK, GPS 매칭, DB, STT·LLM은 아직 구현하거나 연결하지 않았습니다. `/v1/demo-card`는 fixture입니다.
+초기 공동 세팅과 로컬 서버 연결 확인 단계입니다. Android 앱·Pleos SDK·실제 STT·LLM은 미연결입니다. B의 SQLite 저장·메모·동의·합성 경로 매칭·회상 검색은 로컬 구현됐습니다. `/v1/demo-card`는 fixture입니다.
 
 ## 로컬 서버 (Windows PowerShell, Re 폴더에서)
 
@@ -60,3 +60,5 @@ Python 테스트 3개 및 새 서버의 실제 HTTP 저장·조회·재요청·�
 ## HTML 안내자료
 
 HTML 파일은 안내자료/ 폴더에 모았습니다. [자료 목차](안내자료/00-자료목차.html), [팀원 안내](안내자료/Re-팀원안내.html), [프로젝트 소개](안내자료/README.html). 팀원 안내 HTML은 자체 목차와 본문이 포함된 독립 파일입니다. 목차·프로젝트 소개 HTML을 전달할 때는 안내자료 폴더의 HTML 3개를 함께 전달합니다.
+
+B 최신 상태: [구현·검증·한계](docs/b-verification.md). 실제 주행과 앱·AI 통합은 별도 검증이 필요합니다.
