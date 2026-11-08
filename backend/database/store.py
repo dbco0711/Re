@@ -122,7 +122,7 @@ class Store:
             db.execute("DELETE FROM points WHERE trip_id=?",(trip_id,))
 
 
-    def update_memo(self,memo_id,changes):
+    def update_memo(self,memo_id,changes,*,only_unprocessed=False):
         with self.transaction() as db:
             row = db.execute("SELECT trip_id,payload FROM memos WHERE id=?",(memo_id,)).fetchone()
             if not row:
@@ -131,6 +131,12 @@ class Store:
             if not state or state[0]:
                 raise ValueError("consent_revoked")
             memo=json.loads(row[1])
+            if only_unprocessed:
+                if memo["status"] != "stored_not_processed":
+                    return memo
+                if memo.get("summary_source") == "user_edit":
+                    changes = {key: value for key, value in changes.items()
+                               if key not in {"summary", "summary_source"}}
             memo.update(changes)
             db.execute("UPDATE memos SET payload=? WHERE id=?",(json.dumps(memo),memo_id))
             return memo

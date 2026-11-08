@@ -1,7 +1,11 @@
+import logging
+
+from backend.ai.analyzer import analyze_memo
 from fastapi import APIRouter, HTTPException, Response
 from backend.models import MemoCreate, MemoUpdate, AIResult, MemorySearch
 from backend.routes.trips import store
 router = APIRouter(tags=["memo-starter"])
+logger = logging.getLogger(__name__)
 
 def fail(error):
     raise HTTPException(404 if isinstance(error,KeyError) else 409,
@@ -9,11 +13,24 @@ def fail(error):
 
 @router.post("/v1/trips/{trip_id}/memos",status_code=201)
 def create_memo(trip_id:str,body:MemoCreate,response:Response):
+    database = store()
     try:
-        result,created=store().create_memo(trip_id,body.model_dump())
-        response.status_code=201 if created else 200
-        return result
-    except (KeyError,ValueError) as error:
+        result, created = database.create_memo(trip_id, body.model_dump())
+        response.status_code = 201 if created else 200
+        if not created or body.processing_source != "manual":
+            return result
+
+        memo_id = result["memo_id"]
+        try:
+            analysis = AIResult.model_validate(analyze_memo(memo_id, body.transcript or ""))
+            changes = analysis.model_dump(exclude={"transcript"})
+            changes.update(status="processed", summary_source=analysis.processing_source)
+        except Exception as error:
+            # Exceptions can include input text. Log only the exception type.
+            logger.warning("Automatic memo analysis failed (%s)", type(error).__name__)
+            changes = {"status": "analysis_failed"}
+        return database.update_memo(memo_id, changes, only_unprocessed=True)
+    except (KeyError, ValueError) as error:
         fail(error)
 
 @router.get("/v1/memos/{memo_id}")
