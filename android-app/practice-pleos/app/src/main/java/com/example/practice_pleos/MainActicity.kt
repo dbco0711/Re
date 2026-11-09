@@ -37,6 +37,8 @@ class MainActivity : Activity() {
     @Volatile
     private var closing = false
 
+    @Volatile private var upload: ReTripUpload? = null
+
     private data class GpsFix(val latitude: Double, val longitude: Double)
 
     @Volatile
@@ -93,6 +95,7 @@ class MainActivity : Activity() {
 
             onLocation = { location ->
                 latestGpsFix = GpsFix(location.latitude, location.longitude)
+                upload?.location(location.latitude, location.longitude)
                 runOnUiThread {
 
                     latitudeText.text = String.format(
@@ -164,6 +167,38 @@ class MainActivity : Activity() {
             isEnabled = false
         }
 
+        val uploadButton = Button(this).apply {
+            text = "서버 전송 설정"
+            setOnClickListener {
+                val input = android.widget.EditText(this@MainActivity).apply {
+                    setSingleLine()
+                    setText("http://127.0.0.1:8000")
+                }
+                android.app.AlertDialog.Builder(this@MainActivity)
+                    .setTitle("GPS와 음성 전사 전송 동의")
+                    .setMessage("입력한 서버에 주행 위치와 인식한 문장을 전송합니다.")
+                    .setView(input)
+                    .setNegativeButton("취소", null)
+                    .setPositiveButton("동의하고 연결") { _, _ ->
+                        val url = input.text.toString().trim().trimEnd('/')
+                        val uri = runCatching { java.net.URI(url) }.getOrNull()
+                        val valid = uri?.host != null && uri.rawUserInfo == null &&
+                            uri.rawQuery == null && uri.rawFragment == null &&
+                            uri.rawPath.isNullOrEmpty() &&
+                            (uri.scheme == "https" || (uri.scheme == "http" && uri.host == "127.0.0.1"))
+                        if (valid) {
+                            upload = ReTripUpload(url)
+                            isEnabled = false
+                        } else {
+                            android.widget.Toast.makeText(
+                                this@MainActivity, "HTTPS 또는 로컬 개발 주소를 입력하세요.",
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                    .show()
+            }
+        }
         startSpeechButton.setOnClickListener {
             val initialFix = latestGpsFix
             if (initialFix == null) {
@@ -186,20 +221,37 @@ class MainActivity : Activity() {
                 return@setOnClickListener
             }
 
-            startSpeechButton.isEnabled = false
-            stopSpeechButton.isEnabled = true
+            val tripUpload = upload
+            if (tripUpload != null && !tripUpload.hasSavedLocation) {
+                android.widget.Toast.makeText(
+                    this, "서버에 첫 GPS가 저장된 후 다시 눌러 주세요.",
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
             val sessionId = java.util.UUID.randomUUID().toString()
             val sessionDir = File(filesDir, "recordings/$sessionId")
             pcmRecorder = PcmRecorder(sessionDir)
+            uploadButton.isEnabled = false
 
             startSpeechButton.isEnabled = false
             stopSpeechButton.isEnabled = true
 
             pcmRecorder.start(
-                onSegmentReady = { file, startedAtMs ->
+                onSegmentReady = { file, startedAtMs, startedElapsedMs ->
                     Log.i("PleosSTT", "구간 저장: ${file.absolutePath} (${file.length()}바이트)")
                     val fix = latestGpsFix ?: initialFix
-                    talkingAbout.enqueue(file, startedAtMs, fix.latitude, fix.longitude)
+                    talkingAbout.enqueue(file, startedAtMs, fix.latitude, fix.longitude) { json ->
+                        if (json.optString("status") == "ok") {
+                            tripUpload?.memo(
+                                "$sessionId-${file.nameWithoutExtension}",
+                                startedElapsedMs,
+                                (json.getInt("segment") - 1) * 10_000L,
+                                json.getLong("durationMs"),
+                                json.getString("text")
+                            )
+                        }
+                    }
                 },
                 onFinished = { result ->
                     runOnUiThread {
@@ -222,6 +274,7 @@ class MainActivity : Activity() {
             pcmRecorder.stop()
         }
 
+        layout.addView(uploadButton)
         layout.addView(startSpeechButton)
         layout.addView(stopSpeechButton)
         setContentView(layout)
@@ -273,6 +326,7 @@ class MainActivity : Activity() {
         closing = true
         if (::pcmRecorder.isInitialized) pcmRecorder.stop()
         talkingAbout.release()
+        upload?.close()
         super.onDestroy()
     }
 }

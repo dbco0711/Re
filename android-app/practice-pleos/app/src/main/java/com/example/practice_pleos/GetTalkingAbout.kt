@@ -48,14 +48,14 @@ class GetTalkingAbout(context: Context) {
         })
     }
 
-    fun enqueue(file: File, startedAtMs: Long, latitude: Double?, longitude: Double?) {
+    fun enqueue(file: File, startedAtMs: Long, latitude: Double?, longitude: Double?, onSaved: (JSONObject) -> Unit) {
         synchronized(lock) {
             if (closed) return
             worker.execute {
                 if (closed || unusable) return@execute
                 try {
                     val result = transcribe(file)
-                    if (!closed) save(file, startedAtMs, latitude, longitude, result)
+                    if (!closed) onSaved(save(file, startedAtMs, latitude, longitude, result))
                 } catch (error: Exception) {
                     Log.e("PleosSTT", "구간 처리 실패: ${file.absolutePath}", error)
                 }
@@ -116,7 +116,7 @@ class GetTalkingAbout(context: Context) {
 
     private fun save(
         file: File, startedAtMs: Long, latitude: Double?, longitude: Double?, result: Pending
-    ) {
+    ): JSONObject {
         val sessionId = checkNotNull(file.parentFile).name
         val segment = file.nameWithoutExtension.toInt()
         val durationMs = file.length() * 1000L / 32_000L
@@ -148,6 +148,7 @@ class GetTalkingAbout(context: Context) {
         temporary.writeText(json.toString(2), Charsets.UTF_8)
         check(temporary.renameTo(target)) { "JSON 이름 변경 실패: $target" }
         Log.i("PleosSTT", "구간 JSON 저장 완료: ${target.absolutePath}")
+        return json
     }
 
     fun release() {
