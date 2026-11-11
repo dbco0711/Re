@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.practice_pleos.ReRoadLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:layoutDirection="ltr">
+
+    <!-- Tags are left, top, right, bottom coordinates in the 1200 × 842 reference. -->
+
+    <FrameLayout
+        android:id="@+id/header_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="71,50,1136,118" />
+
+    <FrameLayout
+        android:id="@+id/logo_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="76,50,253,115" />
+
+    <FrameLayout
+        android:id="@+id/intro_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="71,153,430,220" />
+
+    <FrameLayout
+        android:id="@+id/main_content_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="71,243,822,782" />
+
+    <FrameLayout
+        android:id="@+id/passenger_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="848,158,1136,529" />
+
+    <FrameLayout
+        android:id="@+id/passenger_list_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="865,236,1119,456" />
+
+    <FrameLayout
+        android:id="@+id/search_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="445,158,822,220" />
+
+    <Button
+        android:id="@+id/nav_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="944,57,998,123"
+        android:backgroundTint="@null"
+        android:text="홈"
+        android:textColor="@android:color/transparent"
+        android:stateListAnimator="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp">
+        <aapt:attr name="android:background">
+            <ripple android:color="#33000000">
+                <item android:id="@android:id/mask">
+                    <shape>
+                        <solid android:color="#FFFFFF" />
+                        <corners android:radius="8dp" />
+                    </shape>
+                </item>
+            </ripple>
+        </aapt:attr>
+    </Button>
+
+    <Button
+        android:id="@+id/nav_memories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="1016,57,1070,123"
+        android:backgroundTint="@null"
+        android:text="추억"
+        android:textColor="@android:color/transparent"
+        android:stateListAnimator="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp">
+        <aapt:attr name="android:background">
+            <ripple android:color="#33000000">
+                <item android:id="@android:id/mask">
+                    <shape>
+                        <solid android:color="#FFFFFF" />
+                        <corners android:radius="8dp" />
+                    </shape>
+                </item>
+            </ripple>
+        </aapt:attr>
+    </Button>
+
+    <Button
+        android:id="@+id/nav_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="1088,57,1142,123"
+        android:backgroundTint="@null"
+        android:text="마이페이지"
+        android:textColor="@android:color/transparent"
+        android:stateListAnimator="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp">
+        <aapt:attr name="android:background">
+            <ripple android:color="#33000000">
+                <item android:id="@android:id/mask">
+                    <shape>
+                        <solid android:color="#FFFFFF" />
+                        <corners android:radius="8dp" />
+                    </shape>
+                </item>
+            </ripple>
+        </aapt:attr>
+    </Button>
+
+    <EditText
+        android:id="@+id/search_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="502,168,738,210"
+        android:background="@android:color/transparent"
+        android:hint="검색어를 입력해주세요."
+        android:textColorHint="@android:color/transparent"
+        android:textColor="#283340"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:singleLine="true"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/voice_search_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="738,163,771,216"
+        android:backgroundTint="@null"
+        android:text="음성 검색"
+        android:textColor="@android:color/transparent"
+        android:stateListAnimator="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp">
+        <aapt:attr name="android:background">
+            <ripple android:color="#33000000">
+                <item android:id="@android:id/mask">
+                    <shape>
+                        <solid android:color="#FFFFFF" />
+                        <corners android:radius="12dp" />
+                    </shape>
+                </item>
+            </ripple>
+        </aapt:attr>
+    </Button>
+
+    <Button
+        android:id="@+id/search_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="772,163,805,216"
+        android:backgroundTint="@null"
+        android:text="검색"
+        android:textColor="@android:color/transparent"
+        android:stateListAnimator="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp">
+        <aapt:attr name="android:background">
+            <ripple android:color="#33000000">
+                <item android:id="@android:id/mask">
+                    <shape>
+                        <solid android:color="#FFFFFF" />
+                        <corners android:radius="12dp" />
+                    </shape>
+                </item>
+            </ripple>
+        </aapt:attr>
+    </Button>
+
+    <Button
+        android:id="@+id/bluetooth_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="1064,181,1118,236"
+        android:backgroundTint="@null"
+        android:text="블루투스"
+        android:textColor="@android:color/transparent"
+        android:stateListAnimator="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp">
+        <aapt:attr name="android:background">
+            <ripple android:color="#33000000">
+                <item android:id="@android:id/mask">
+                    <shape>
+                        <solid android:color="#FFFFFF" />
+                        <corners android:radius="10dp" />
+                    </shape>
+                </item>
+            </ripple>
+        </aapt:attr>
+    </Button>
+
+    <Button
+        android:id="@+id/add_passenger_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="865,465,1119,511"
+        android:backgroundTint="@null"
+        android:text="탑승 인원 추가"
+        android:textColor="@android:color/transparent"
+        android:stateListAnimator="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp">
+        <aapt:attr name="android:background">
+            <ripple android:color="#33000000">
+                <item android:id="@android:id/mask">
+                    <shape>
+                        <solid android:color="#FFFFFF" />
+                        <corners android:radius="16dp" />
+                    </shape>
+                </item>
+            </ripple>
+        </aapt:attr>
+    </Button>
+
+    <Button
+        android:id="@+id/record_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="847,558,1136,663"
+        android:backgroundTint="@null"
+        android:text="녹음하기"
+        android:textColor="@android:color/transparent"
+        android:stateListAnimator="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp">
+        <aapt:attr name="android:background">
+            <ripple android:color="#33000000">
+                <item android:id="@android:id/mask">
+                    <shape>
+                        <solid android:color="#FFFFFF" />
+                        <corners android:radius="29dp" />
+                    </shape>
+                </item>
+            </ripple>
+        </aapt:attr>
+    </Button>
+
+    <Button
+        android:id="@+id/recall_button"
+        android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        android:tag="847,677,1136,782"
+        android:backgroundTint="@null"
+        android:text="회상하기"
+        android:textColor="@android:color/transparent"
+        android:stateListAnimator="@null"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp">
+        <aapt:attr name="android:background">
+            <ripple android:color="#33000000">
+                <item android:id="@android:id/mask">
+                    <shape>
+                        <solid android:color="#FFFFFF" />
+                        <corners android:radius="29dp" />
+                    </shape>
+                </item>
+            </ripple>
+        </aapt:attr>
+    </Button>
+</com.example.practice_pleos.ReRoadLayout>
