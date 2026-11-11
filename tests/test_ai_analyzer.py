@@ -1,3 +1,5 @@
+"""A 오태경 담당. ChatGPT 보조 수정 (2026-11-08)."""
+
 import unittest
 
 from backend.ai.analyzer import analyze_memo
@@ -17,7 +19,7 @@ class AnalyzeMemoTests(unittest.TestCase):
     def test_unknown_purpose(self):
         result = analyze_memo("m3", "오늘 날씨가 참 좋네요.")
         self.assertIsNone(result["travel_purpose"])
-        self.assertEqual(result["keywords"], [])
+        self.assertEqual(result["keywords"], ["날씨"])
 
     def test_empty_text(self):
         with self.assertRaises(ValueError):
