@@ -122,6 +122,6 @@ class ReTripUpload(private val baseUrl: String) : Closeable {
 
     @Synchronized
     override fun close() {
-        worker.shutdownNow()
+        worker.shutdown()
     }
 }

@@ -234,6 +234,17 @@
         </aapt:attr>
     </Button>
 
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="847,530,1136,558"
+        android:gravity="center_vertical"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#202124"
+        android:textSize="13sp" />
+
     <Button
         android:id="@+id/record_button"
         android:layout_width="wrap_content"
@@ -281,4 +292,5 @@
             </ripple>
         </aapt:attr>
     </Button>
+
 </com.example.practice_pleos.ReRoadLayout>

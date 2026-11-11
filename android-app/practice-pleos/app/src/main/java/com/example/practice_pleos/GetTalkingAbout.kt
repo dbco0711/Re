@@ -24,6 +24,8 @@ class GetTalkingAbout(context: Context) {
     private val lock = Any()
 
     @Volatile private var closed = false
+
+    private var releaseRequested = false
     private var unusable = false
     private var pending: Pending? = null
 
@@ -121,7 +123,7 @@ class GetTalkingAbout(context: Context) {
         val segment = file.nameWithoutExtension.toInt()
         val durationMs = file.length() * 1000L / 32_000L
         val startMs = startedAtMs + (segment - 1) * 10_000L
-        val zone = ZoneId.of("Asia/Seoul")
+            val zone = ZoneId.of("Asia/Seoul")
         val location = if (latitude != null && longitude != null) {
             JSONObject().put("latitude", latitude).put("longitude", longitude)
                 .put("address", address(latitude, longitude) ?: JSONObject.NULL)
@@ -151,15 +153,21 @@ class GetTalkingAbout(context: Context) {
         return json
     }
 
-    fun release() {
+    fun release(onReleased: () -> Unit = {}) {
         synchronized(lock) {
-            if (closed) return
-            closed = true
-            finish(null, "closed")
+            if (releaseRequested) return
+            releaseRequested = true
+
             worker.execute {
-                speechToText.removeListener(listener)
-                speechToText.release()
+                try {
+                    closed = true
+                    speechToText.removeListener(listener)
+                    speechToText.release()
+                } finally {
+                    onReleased()
+                }
             }
+
             worker.shutdown()
         }
     }
