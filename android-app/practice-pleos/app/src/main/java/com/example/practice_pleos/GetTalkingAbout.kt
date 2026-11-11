@@ -24,6 +24,8 @@ class GetTalkingAbout(context: Context) {
     private val lock = Any()
 
     @Volatile private var closed = false
+
+    private var releaseRequested = false
     private var unusable = false
     private var pending: Pending? = null
 
@@ -48,14 +50,14 @@ class GetTalkingAbout(context: Context) {
         })
     }
 
-    fun enqueue(file: File, startedAtMs: Long, latitude: Double?, longitude: Double?) {
+    fun enqueue(file: File, startedAtMs: Long, latitude: Double?, longitude: Double?, onSaved: (JSONObject) -> Unit) {
         synchronized(lock) {
             if (closed) return
             worker.execute {
                 if (closed || unusable) return@execute
                 try {
                     val result = transcribe(file)
-                    if (!closed) save(file, startedAtMs, latitude, longitude, result)
+                    if (!closed) onSaved(save(file, startedAtMs, latitude, longitude, result))
                 } catch (error: Exception) {
                     Log.e("PleosSTT", "구간 처리 실패: ${file.absolutePath}", error)
                 }
@@ -116,12 +118,12 @@ class GetTalkingAbout(context: Context) {
 
     private fun save(
         file: File, startedAtMs: Long, latitude: Double?, longitude: Double?, result: Pending
-    ) {
+    ): JSONObject {
         val sessionId = checkNotNull(file.parentFile).name
         val segment = file.nameWithoutExtension.toInt()
         val durationMs = file.length() * 1000L / 32_000L
         val startMs = startedAtMs + (segment - 1) * 10_000L
-        val zone = ZoneId.of("Asia/Seoul")
+            val zone = ZoneId.of("Asia/Seoul")
         val location = if (latitude != null && longitude != null) {
             JSONObject().put("latitude", latitude).put("longitude", longitude)
                 .put("address", address(latitude, longitude) ?: JSONObject.NULL)
@@ -148,17 +150,24 @@ class GetTalkingAbout(context: Context) {
         temporary.writeText(json.toString(2), Charsets.UTF_8)
         check(temporary.renameTo(target)) { "JSON 이름 변경 실패: $target" }
         Log.i("PleosSTT", "구간 JSON 저장 완료: ${target.absolutePath}")
+        return json
     }
 
-    fun release() {
+    fun release(onReleased: () -> Unit = {}) {
         synchronized(lock) {
-            if (closed) return
-            closed = true
-            finish(null, "closed")
+            if (releaseRequested) return
+            releaseRequested = true
+
             worker.execute {
-                speechToText.removeListener(listener)
-                speechToText.release()
+                try {
+                    closed = true
+                    speechToText.removeListener(listener)
+                    speechToText.release()
+                } finally {
+                    onReleased()
+                }
             }
+
             worker.shutdown()
         }
     }

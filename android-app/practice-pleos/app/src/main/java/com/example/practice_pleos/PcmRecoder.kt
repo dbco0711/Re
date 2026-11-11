@@ -15,7 +15,7 @@ class PcmRecorder(private val sessionDir: File) {
     // MainActivity에서 RECORD_AUDIO 권한을 확인한 뒤 호출합니다.
     @SuppressLint("MissingPermission")
     fun start(
-        onSegmentReady: (File, Long) -> Unit,
+        onSegmentReady: (File, Long, Long) -> Unit,
         onFinished: (Result<File>) -> Unit
     ) {
         if (worker != null) return
@@ -54,6 +54,7 @@ class PcmRecorder(private val sessionDir: File) {
                     var output: java.io.BufferedOutputStream? = null
 
                     var startedAtMs = 0L
+                    var startedElapsedMs = 0L
                     fun finishSegment() {
                         val file = currentFile ?: return
                         val stream = output
@@ -63,12 +64,13 @@ class PcmRecorder(private val sessionDir: File) {
                         currentFile = null
                         bytesInSegment = 0
                         segmentNumber++
-                        onSegmentReady(file, startedAtMs)
+                        onSegmentReady(file, startedAtMs, startedElapsedMs)
                     }
 
                     try {
                         recorder.startRecording()
                         startedAtMs = System.currentTimeMillis()
+                        startedElapsedMs = android.os.SystemClock.elapsedRealtime()
                         check(recorder.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
                             "녹음을 시작하지 못했습니다."
                         }
