@@ -5,7 +5,7 @@ from backend.models import GPSPoint
 
 @dataclass(frozen=True)
 class MatchConfig:
-    distance_m: float = 25.0
+    distance_m: float = 50.0
     direction_deg: float = 35.0
     min_overlap_m: float = 100.0
     sample_step_m: float = 10.0

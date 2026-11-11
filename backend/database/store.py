@@ -102,6 +102,33 @@ class Store:
             db.execute("INSERT INTO memos VALUES(?,?,?,?,?)",(result["memo_id"],trip_id,payload["client_memo_id"],request,json.dumps(result)))
         return result,True
 
+    def list_memos(self, limit: int, offset: int):
+        with self.transaction() as db:
+            rows = db.execute(
+                """
+                SELECT m.payload
+                FROM memos AS m
+                JOIN consents AS c ON c.trip_id = m.trip_id
+                WHERE c.revoked = 0
+                ORDER BY m.rowid DESC
+                LIMIT ? OFFSET ?
+                """,
+                (limit + 1, offset),
+            ).fetchall()
+
+        items = []
+        for (payload,) in rows[:limit]:
+            memo = json.loads(payload)
+            items.append({
+                "memo_id": memo["memo_id"],
+                "trip_id": memo["trip_id"],
+                "recorded_at": memo["recorded_at"],
+                "summary": memo.get("summary"),
+                "status": memo["status"],
+                "processing_source": memo["processing_source"],
+            })
+        return {"items": items, "next_offset": offset + limit if len(rows) > limit else None}
+
     def get_memo(self,memo_id):
         with self.transaction() as db:
             row = db.execute("SELECT payload FROM memos WHERE id=?",(memo_id,)).fetchone()
