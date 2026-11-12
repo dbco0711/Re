@@ -19,6 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Practice_pleos">
 
+        <activity android:name=".RecallActivity" android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

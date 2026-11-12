@@ -1,7 +1,7 @@
 import logging
 
 from backend.ai.analyzer import analyze_memo
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Query, Response
 from backend.models import MemoCreate, MemoUpdate, AIResult, MemorySearch
 from backend.routes.trips import store
 router = APIRouter(tags=["memo-starter"])
@@ -32,6 +32,25 @@ def create_memo(trip_id:str,body:MemoCreate,response:Response):
         return database.update_memo(memo_id, changes, only_unprocessed=True)
     except (KeyError, ValueError) as error:
         fail(error)
+
+@router.get("/v1/memos")
+def list_memos(
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0, le=9223372036854775807),
+):
+    """Return saved memo previews in newest-first order for the parked UI."""
+    return store().list_memos(limit, offset)
+
+
+@router.get("/v1/memos/nearby")
+def list_nearby_memos(
+    lat: float = Query(ge=-90, le=90),
+    lon: float = Query(ge=-180, le=180),
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0, le=9223372036854775807),
+):
+    return store().list_memos(limit, offset, near={"lat": lat, "lon": lon})
+
 
 @router.get("/v1/memos/{memo_id}")
 def get_memo(memo_id:str):

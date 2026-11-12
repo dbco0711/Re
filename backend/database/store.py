@@ -102,6 +102,57 @@ class Store:
             db.execute("INSERT INTO memos VALUES(?,?,?,?,?)",(result["memo_id"],trip_id,payload["client_memo_id"],request,json.dumps(result)))
         return result,True
 
+    def list_memos(self, limit: int, offset: int, *, near=None):
+        with self.transaction() as db:
+            location_filter = ""
+            parameters = []
+            if near is not None:
+                from backend.matching.service import DEFAULT, distance
+
+                db.create_function(
+                    "distance_from_current", 2,
+                    lambda lat, lon: distance(near, {"lat": lat, "lon": lon}),
+                )
+                location_filter = """
+                AND EXISTS (
+                    SELECT 1
+                    FROM json_each(m.payload, '$.linked_seqs') AS linked
+                    JOIN points AS p ON p.trip_id = m.trip_id AND p.seq = linked.value
+                    WHERE distance_from_current(
+                        json_extract(p.payload, '$.lat'), json_extract(p.payload, '$.lon')
+                    ) <= ?
+                )
+                """
+                parameters.append(DEFAULT.distance_m)
+            rows = db.execute(
+                """
+                SELECT m.payload
+                FROM memos AS m
+                JOIN consents AS c ON c.trip_id = m.trip_id
+                WHERE c.revoked = 0
+                """ + location_filter + """
+                ORDER BY m.rowid DESC
+                LIMIT ? OFFSET ?
+                """,
+                (*parameters, limit + 1, offset),
+            ).fetchall()
+
+        items = []
+        for (payload,) in rows[:limit]:
+            memo = json.loads(payload)
+            item = {
+                "memo_id": memo["memo_id"],
+                "trip_id": memo["trip_id"],
+                "recorded_at": memo["recorded_at"],
+                "summary": memo.get("summary"),
+                "status": memo["status"],
+                "processing_source": memo["processing_source"],
+            }
+            if near is not None:
+                item["transcript"] = memo.get("transcript")
+            items.append(item)
+        return {"items": items, "next_offset": offset + limit if len(rows) > limit else None}
+
     def get_memo(self,memo_id):
         with self.transaction() as db:
             row = db.execute("SELECT payload FROM memos WHERE id=?",(memo_id,)).fetchone()

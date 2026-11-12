@@ -12,7 +12,10 @@ import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.Executors
 
-class ReTripUpload(private val baseUrl: String) : Closeable {
+class ReTripUpload(
+    private val baseUrl: String,
+    private val onLocationSaved: (String) -> Unit = {}
+) : Closeable {
     private val startedAt = Instant.now().toString()
     private val tripStart = SystemClock.elapsedRealtime()
     private val clientTripId = UUID.randomUUID().toString()
@@ -66,6 +69,7 @@ class ReTripUpload(private val baseUrl: String) : Closeable {
         val id = tripId ?: post("/v1/trips", JSONObject()
             .put("client_trip_id", clientTripId).put("source", "real_gps")
             .put("started_at", startedAt)).getString("trip_id").also { tripId = it }
+        val hadPoints = points.isNotEmpty()
         while (points.isNotEmpty()) {
             val point = points.first()
             post("/v1/trips/$id/points", JSONObject().put("points", JSONArray().put(point)))
@@ -76,6 +80,7 @@ class ReTripUpload(private val baseUrl: String) : Closeable {
             }
             points.removeFirst()
         }
+        if (hadPoints) onLocationSaved(id)
 
         val first = firstSavedMs ?: return
         while (memos.isNotEmpty()) {

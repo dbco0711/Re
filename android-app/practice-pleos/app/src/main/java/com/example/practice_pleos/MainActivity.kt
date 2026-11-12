@@ -38,6 +38,8 @@ class MainActivity : Activity() {
     private var closing = false
 
     @Volatile private var upload: ReTripUpload? = null
+    private var memoryClient: ReMemoryClient? = null
+    private var recallServerUrl = "http://127.0.0.1:8000"
 
     private data class GpsFix(val latitude: Double, val longitude: Double)
 
@@ -167,6 +169,19 @@ class MainActivity : Activity() {
             isEnabled = false
         }
 
+        val routeMemoText = TextView(this).apply {
+            textSize = 18f
+            setTextColor(Color.WHITE)
+            visibility = android.view.View.GONE
+        }
+
+        val savedMemosButton = Button(this).apply {
+            text = "저장된 메모"
+            setOnClickListener {
+                startActivity(RecallActivity.createIntent(this@MainActivity, recallServerUrl))
+            }
+        }
+
         val uploadButton = Button(this).apply {
             text = "서버 전송 설정"
             setOnClickListener {
@@ -187,7 +202,24 @@ class MainActivity : Activity() {
                             uri.rawPath.isNullOrEmpty() &&
                             (uri.scheme == "https" || (uri.scheme == "http" && uri.host == "127.0.0.1"))
                         if (valid) {
-                            upload = ReTripUpload(url)
+                            recallServerUrl = url
+                            val client = ReMemoryClient(url)
+                            memoryClient = client
+                            upload = ReTripUpload(url) { tripId ->
+                                client.searchRoute(tripId) { memo ->
+                                    runOnUiThread {
+                                        if (!closing) {
+                                            val summary = memo?.summary
+                                            routeMemoText.text = summary.orEmpty()
+                                            routeMemoText.visibility = if (summary.isNullOrBlank()) {
+                                                android.view.View.GONE
+                                            } else {
+                                                android.view.View.VISIBLE
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             isEnabled = false
                         } else {
                             android.widget.Toast.makeText(
@@ -277,6 +309,8 @@ class MainActivity : Activity() {
         layout.addView(uploadButton)
         layout.addView(startSpeechButton)
         layout.addView(stopSpeechButton)
+        layout.addView(savedMemosButton)
+        layout.addView(routeMemoText)
         setContentView(layout)
 
         talkingAbout = GetTalkingAbout(this)
@@ -327,6 +361,7 @@ class MainActivity : Activity() {
         if (::pcmRecorder.isInitialized) pcmRecorder.stop()
         talkingAbout.release()
         upload?.close()
+        memoryClient?.close()
         super.onDestroy()
     }
 }
