@@ -12,25 +12,25 @@
         android:id="@+id/header_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="71,50,1136,118" />
+        android:tag="85,80,1620,158" />
 
     <FrameLayout
         android:id="@+id/logo_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="76,50,253,115" />
+        android:tag="85,80,155,158" />
 
     <FrameLayout
         android:id="@+id/intro_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="71,153,430,220" />
+        android:tag="85,207,550,300" />
 
     <FrameLayout
         android:id="@+id/main_content_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="71,243,822,782">
+        android:tag="85,334,1168,1111">
 
         <TextView
             android:id="@+id/pleos_location_text"
@@ -99,25 +99,25 @@
         android:id="@+id/passenger_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="848,158,1136,529" />
+        android:tag="1205,213,1621,746" />
 
     <FrameLayout
         android:id="@+id/passenger_list_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="865,236,1119,456" />
+        android:tag="1230,310,1595,646" />
 
     <FrameLayout
         android:id="@+id/search_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="445,158,822,220" />
+        android:tag="625,213,1168,300" />
 
     <Button
         android:id="@+id/nav_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="944,57,998,123"
+        android:tag="1350,78,1415,160"
         android:backgroundTint="@null"
         android:text="홈"
         android:textColor="@android:color/transparent"
@@ -141,7 +141,7 @@
         android:id="@+id/nav_memories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="1016,57,1070,123"
+        android:tag="1456,78,1521,160"
         android:backgroundTint="@null"
         android:text="추억"
         android:textColor="@android:color/transparent"
@@ -165,9 +165,9 @@
         android:id="@+id/nav_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="1088,57,1142,123"
+        android:tag="1558,78,1623,160"
         android:backgroundTint="@null"
-        android:text="마이페이지"
+        android:text="설정"
         android:textColor="@android:color/transparent"
         android:stateListAnimator="@null"
         android:minWidth="0dp"
@@ -189,7 +189,7 @@
         android:id="@+id/search_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="502,168,738,210"
+        android:tag="711,224,1046,286"
         android:background="@android:color/transparent"
         android:hint="검색어를 입력해주세요."
         android:textColorHint="@android:color/transparent"
@@ -205,7 +205,7 @@
         android:id="@+id/voice_search_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="738,163,771,216"
+        android:tag="1046,224,1096,286"
         android:backgroundTint="@null"
         android:text="음성 검색"
         android:textColor="@android:color/transparent"
@@ -229,7 +229,7 @@
         android:id="@+id/search_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="772,163,805,216"
+        android:tag="1096,224,1140,286"
         android:backgroundTint="@null"
         android:text="검색"
         android:textColor="@android:color/transparent"
@@ -253,7 +253,7 @@
         android:id="@+id/bluetooth_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="1064,181,1118,236"
+        android:tag="1534,240,1601,312"
         android:backgroundTint="@null"
         android:text="블루투스"
         android:textColor="@android:color/transparent"
@@ -277,7 +277,7 @@
         android:id="@+id/add_passenger_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="865,465,1119,511"
+        android:tag="1230,653,1596,721"
         android:backgroundTint="@null"
         android:text="탑승 인원 추가"
         android:textColor="@android:color/transparent"
@@ -301,7 +301,7 @@
         android:id="@+id/status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="847,530,1136,558"
+        android:tag="1205,747,1621,787"
         android:gravity="center_vertical"
         android:ellipsize="end"
         android:maxLines="1"
@@ -312,9 +312,9 @@
         android:id="@+id/record_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="847,558,1136,663"
+        android:tag="1204,788,1621,940"
         android:backgroundTint="@null"
-        android:text="녹음하기"
+        android:text="기억하기"
         android:textColor="@android:color/transparent"
         android:stateListAnimator="@null"
         android:minWidth="0dp"
@@ -336,7 +336,7 @@
         android:id="@+id/recall_button"
         android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-        android:tag="847,677,1136,782"
+        android:tag="1204,960,1621,1112"
         android:backgroundTint="@null"
         android:text="회상하기"
         android:textColor="@android:color/transparent"
