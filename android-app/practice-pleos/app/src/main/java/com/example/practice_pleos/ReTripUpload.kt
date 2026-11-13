@@ -12,10 +12,7 @@ import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.Executors
 
-class ReTripUpload(
-    private val baseUrl: String,
-    private val onLocationSaved: (String) -> Unit = {}
-) : Closeable {
+class ReTripUpload(private val baseUrl: String, private val logJson: Boolean = false) : Closeable {
     private val startedAt = Instant.now().toString()
     private val tripStart = SystemClock.elapsedRealtime()
     private val clientTripId = UUID.randomUUID().toString()
@@ -69,7 +66,6 @@ class ReTripUpload(
         val id = tripId ?: post("/v1/trips", JSONObject()
             .put("client_trip_id", clientTripId).put("source", "real_gps")
             .put("started_at", startedAt)).getString("trip_id").also { tripId = it }
-        val hadPoints = points.isNotEmpty()
         while (points.isNotEmpty()) {
             val point = points.first()
             post("/v1/trips/$id/points", JSONObject().put("points", JSONArray().put(point)))
@@ -80,7 +76,6 @@ class ReTripUpload(
             }
             points.removeFirst()
         }
-        if (hadPoints) onLocationSaved(id)
 
         val first = firstSavedMs ?: return
         while (memos.isNotEmpty()) {
@@ -115,7 +110,13 @@ class ReTripUpload(
             connection.readTimeout = 15000
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-            connection.outputStream.use { it.write(json.toString().toByteArray(Charsets.UTF_8)) }
+            val payload = json.toString()
+            if (logJson && path.endsWith("/memos")) {
+                payload.chunked(850).forEachIndexed { index, part ->
+                    Log.d("ReUploadJson", "POST $path part=" + (index + 1) + " $part")
+                }
+            }
+            connection.outputStream.use { it.write(payload.toByteArray(Charsets.UTF_8)) }
             val status = connection.responseCode
             if (status !in 200..299) throw HttpError(status)
             val body = connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
@@ -127,6 +128,6 @@ class ReTripUpload(
 
     @Synchronized
     override fun close() {
-        worker.shutdownNow()
+        worker.shutdown()
     }
 }

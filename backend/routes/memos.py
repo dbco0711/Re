@@ -46,10 +46,13 @@ def list_memos(
 def list_nearby_memos(
     lat: float = Query(ge=-90, le=90),
     lon: float = Query(ge=-180, le=180),
+    by_recording: bool = False,
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0, le=9223372036854775807),
 ):
-    return store().list_memos(limit, offset, near={"lat": lat, "lon": lon})
+    return store().list_memos(
+        limit, offset, near={"lat": lat, "lon": lon}, by_recording=by_recording
+    )
 
 
 @router.get("/v1/memos/{memo_id}")

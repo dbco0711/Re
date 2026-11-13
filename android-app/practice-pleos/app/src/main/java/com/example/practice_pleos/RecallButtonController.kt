@@ -5,7 +5,13 @@ import android.view.View
 import android.widget.Button
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.LinearLayout
+import androidx.core.view.ViewCompat
 import java.io.Closeable
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class RecallButtonController(
     private val activity: Activity,
@@ -14,6 +20,10 @@ class RecallButtonController(
     currentPosition: () -> ReMemoryClient.Position?
 ) : Closeable {
     private val client = ReMemoryClient(serverUrl)
+    private val lookup = NeighborhoodLookup(activity)
+    private val content = activity.findViewById<LinearLayout>(R.id.recall_content)
+    private val timeFormat = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm", Locale.KOREA)
+        .withZone(ZoneId.of("Asia/Seoul"))
     private val text = activity.findViewById<TextView>(R.id.recall_text)
     private val scroll = activity.findViewById<ScrollView>(R.id.recall_scroll)
     private val previous = activity.findViewById<Button>(R.id.recall_previous)
@@ -47,28 +57,27 @@ class RecallButtonController(
         waitingForPosition = false
         button.removeCallbacks(locationTimeout)
         button.isEnabled = false
-        showText("현재 위치 주변의 메모를 불러오는 중입니다…")
-        client.listNearbyMemos(position, offset) { result ->
+        showText("현재 위치 주변의 녹음을 불러오는 중입니다…")
+        client.listNearbyRecordings(position, offset, lookup) { result ->
             activity.runOnUiThread {
                 if (closed || activity.isFinishing || activity.isDestroyed) return@runOnUiThread
                 button.isEnabled = true
 
                 val page = result.getOrNull()
                 if (page == null) {
-                    showText("메모를 불러오지 못했습니다. 서버 연결을 확인해 주세요.")
+                    showText("녹음을 불러오지 못했습니다. 서버 연결을 확인해 주세요.")
                     return@runOnUiThread
                 }
 
-                val content = page.memos.joinToString("\n\n") { memo ->
-                    val body = memo.transcript?.takeIf { it.isNotBlank() }
-                        ?: memo.summary?.takeIf { it.isNotBlank() }
-                        ?: "저장된 텍스트가 없습니다."
-                    "${memo.recordedAt}\n$body"
+                if (page.recordings.isEmpty()) {
+                    showText("현재 위치 주변에 저장된 녹음이 없습니다.")
+                } else {
+                    text.visibility = View.GONE
+                    page.recordings.forEach(::addRecording)
                 }
-                showText(content.ifEmpty { "현재 위치 주변에 저장된 메모가 없습니다." })
                 if (offset > 0) {
                     previous.visibility = View.VISIBLE
-                    previous.setOnClickListener { loadPage(position, (offset - 20).coerceAtLeast(0)) }
+                    previous.setOnClickListener { loadPage(position, (offset - ReMemoryClient.RECORDINGS_PER_PAGE).coerceAtLeast(0)) }
                 }
                 page.nextOffset?.let { nextOffset ->
                     next.visibility = View.VISIBLE
@@ -78,7 +87,33 @@ class RecallButtonController(
         }
     }
 
+    private fun addRecording(recording: ReMemoryClient.Recording) {
+        val time = runCatching { timeFormat.format(Instant.parse(recording.recordedAt)) }
+            .getOrDefault(recording.recordedAt)
+        val heading = "$time  ·  ${recording.neighborhood ?: "동 정보 없음"}"
+        val toggle = Button(activity).apply {
+            isAllCaps = false
+            text = "$heading  ▾"
+            ViewCompat.setStateDescription(this, "접힘")
+        }
+        val detail = TextView(activity).apply {
+            textSize = 18f
+            text = recording.transcript?.takeIf { it.isNotBlank() } ?: "저장된 대화 내용이 없습니다."
+            visibility = View.GONE
+        }
+        toggle.setOnClickListener {
+            val expanded = detail.visibility != View.VISIBLE
+            detail.visibility = if (expanded) View.VISIBLE else View.GONE
+            toggle.text = if (expanded) "$heading  ▴" else "$heading  ▾"
+            ViewCompat.setStateDescription(toggle, if (expanded) "펼쳐짐" else "접힘")
+        }
+        content.addView(toggle)
+        content.addView(detail)
+    }
+
     private fun showText(message: String) {
+        if (content.childCount > 1) content.removeViews(1, content.childCount - 1)
+        text.visibility = View.VISIBLE
         text.text = message
         scroll.scrollTo(0, 0)
         previous.visibility = View.GONE
@@ -92,5 +127,6 @@ class RecallButtonController(
         previous.setOnClickListener(null)
         next.setOnClickListener(null)
         client.close()
+        lookup.close()
     }
 }

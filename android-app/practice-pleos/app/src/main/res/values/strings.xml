@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">practice_pleos</string>
+    <string name="current_neighborhood">현재 위치\n%1$s</string>
+    <string name="current_neighborhood_unavailable">현재 위치\n동네 이름 확인 중</string>
 </resources>

@@ -1,0 +1,4 @@
+본 데이터는 통계청 통계지리정보서비스(SGIS, https://sgis.kostat.go.kr)에서 공공누리 제1유형으로 개방한 행정동 경계를 가공한 것이며(가공: vuski/admdongkor, https://github.com/vuski/admdongkor), CC BY 4.0으로 배포됩니다.
+https://creativecommons.org/licenses/by/4.0/
+원본: https://github.com/vuski/admdongkor/tree/master/ver20261001
+Re 변경 사항: WGS84 경계 좌표를 소수점 다섯 자리로 반올림하고, 연속 중복점을 제거한 뒤 조회용 이진 파일로 변환했습니다.

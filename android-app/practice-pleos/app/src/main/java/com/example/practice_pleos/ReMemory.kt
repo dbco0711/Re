@@ -11,7 +11,12 @@ import java.util.concurrent.Executors
 
 class ReMemoryClient(private val baseUrl: String) : Closeable {
     data class Memo(val id: String, val recordedAt: String, val summary: String?, val transcript: String?)
-    data class Page(val memos: List<Memo>, val nextOffset: Int?)
+    data class Recording(val recordedAt: String, val neighborhood: String?, val transcript: String?)
+    data class Page(val recordings: List<Recording>, val nextOffset: Int?)
+
+    companion object {
+        const val RECORDINGS_PER_PAGE = 20
+    }
     data class Position(val latitude: Double, val longitude: Double)
 
     private val worker = Executors.newSingleThreadExecutor()
@@ -43,17 +48,33 @@ class ReMemoryClient(private val baseUrl: String) : Closeable {
     }
 
     @Synchronized
-    fun listNearbyMemos(position: Position, offset: Int, onResult: (Result<Page>) -> Unit) {
+    internal fun listNearbyRecordings(
+        position: Position,
+        offset: Int,
+        lookup: NeighborhoodLookup,
+        onResult: (Result<Page>) -> Unit
+    ) {
         if (worker.isShutdown) return
         worker.execute {
             val result = runCatching {
                 val response = request(
-                    "/v1/memos/nearby?lat=${position.latitude}&lon=${position.longitude}&limit=20&offset=$offset"
+                    "/v1/memos/nearby?lat=${position.latitude}&lon=${position.longitude}&by_recording=true&limit=$RECORDINGS_PER_PAGE&offset=$offset"
                 )
                 val items = response.getJSONArray("items")
                 val nextOffset = if (response.isNull("next_offset")) null
                     else response.getInt("next_offset")
-                Page(List(items.length()) { parseMemo(items.getJSONObject(it)) }, nextOffset)
+                val recordings = List(items.length()) { index ->
+                    val item = items.getJSONObject(index)
+                    val location = item.optJSONObject("location")
+                    val name = location?.let {
+                        lookup.findNeighborhood(it.getDouble("lat"), it.getDouble("lon"))
+                    }
+                    Recording(
+                        item.getString("recorded_at"), name,
+                        if (item.isNull("transcript")) null else item.getString("transcript")
+                    )
+                }
+                Page(recordings, nextOffset)
             }
             onResult(result)
         }
@@ -82,12 +103,13 @@ class ReMemoryClient(private val baseUrl: String) : Closeable {
             if (status !in 200..299) throw IOException("HTTP $status")
             connection.inputStream.bufferedReader(Charsets.UTF_8).use { JSONObject(it.readText()) }
         } finally {
-            connection.disconnect()
-        }
+                connection.disconnect()
+            }
     }
 
     @Synchronized
     override fun close() {
         worker.shutdownNow()
     }
+
 }

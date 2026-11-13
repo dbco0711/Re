@@ -7,6 +7,7 @@
     android:layoutDirection="ltr">
 
     <!-- Tags are left, top, right, bottom coordinates in the 1200 × 842 reference. -->
+
     <FrameLayout
         android:id="@+id/header_box"
         android:layout_width="wrap_content"
@@ -31,10 +32,22 @@
         android:layout_height="wrap_content"
         android:tag="71,243,822,782">
 
+        <TextView
+            android:id="@+id/pleos_location_text"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="#F4F7FA"
+            android:padding="16dp"
+            android:text="현재 위치 확인 중"
+            android:textColor="#182438"
+            android:textSize="16sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:layout_marginTop="96dp"
             android:padding="20dp">
 
             <ScrollView
@@ -43,13 +56,20 @@
                 android:layout_height="0dp"
                 android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/recall_text"
+                <LinearLayout
+                    android:id="@+id/recall_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:accessibilityLiveRegion="polite"
-                    android:textColor="#202630"
-                    android:textSize="18sp" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/recall_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:accessibilityLiveRegion="polite"
+                        android:textColor="#202630"
+                        android:textSize="18sp" />
+                </LinearLayout>
             </ScrollView>
 
             <LinearLayout
@@ -277,6 +297,17 @@
         </aapt:attr>
     </Button>
 
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="847,530,1136,558"
+        android:gravity="center_vertical"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#202124"
+        android:textSize="13sp" />
+
     <Button
         android:id="@+id/record_button"
         android:layout_width="wrap_content"
@@ -304,7 +335,7 @@
     <Button
         android:id="@+id/recall_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            android:layout_height="wrap_content"
         android:tag="847,677,1136,782"
         android:backgroundTint="@null"
         android:text="회상하기"
@@ -324,4 +355,5 @@
             </ripple>
         </aapt:attr>
     </Button>
+
 </com.example.practice_pleos.ReRoadLayout>
