@@ -27,7 +27,8 @@ class GetLocation(
     fun startLocationUpdates() {
 
         if (fusedLocation != null) {
-            Log.d(TAG, "GPS가 이미 실행 중입니다.")
+            Log.d(
+                    TAG, "GPS가 이미 실행 중입니다.")
             return
         }
 

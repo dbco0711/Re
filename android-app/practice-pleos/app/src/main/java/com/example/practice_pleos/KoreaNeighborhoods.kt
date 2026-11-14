@@ -6,7 +6,7 @@ import java.util.zip.GZIPInputStream
 import kotlin.math.roundToInt
 
 internal class KoreaNeighborhoods(assets: AssetManager) {
-    private val boundaries = GZIPInputStream(assets.open("korea_neighborhoods.bin.gz")).use { it.readBytes() }
+    private val boundaries = assets.open("korea_neighborhoods.bin").use { it.readBytes() }
 
     fun find(latitude: Double, longitude: Double): String? {
         val x = (longitude * 100_000).roundToInt()
