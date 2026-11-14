@@ -39,6 +39,7 @@ dependencies {
 
     implementation("ai.pleos.playground:FusedLocation:1.1.3") //FusedLocatino을 추가하기 위한
     implementation("ai.pleos.playground:SpeechToText:3.3.1") //stt 사용하기 위한 추가
+    implementation("ai.pleos.playground:NaviHelper:3.0.5") // navi를 사용하기 위해 추가
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)

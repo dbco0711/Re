@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.util.Log
+import android.os.SystemClock
 import android.widget.Toast
 import java.io.File
 import java.util.UUID
@@ -12,7 +13,8 @@ class RecordingController(
     private val activity: Activity,
     private val onStatusChanged: (String) -> Unit,
     private val onRecordingChanged: (Boolean) -> Unit,
-    private val onReadyChanged: (Boolean) -> Unit
+    private val onReadyChanged: (Boolean) -> Unit,
+    private val onGpsLocationChanged: (Double, Double) -> Unit = { _, _ -> }
 ) {
 
     companion object {
@@ -27,7 +29,8 @@ class RecordingController(
 
     private data class GpsFix(
         val latitude: Double,
-        val longitude: Double
+        val longitude: Double,
+        val receivedAt: Long
     )
 
     @Volatile
@@ -46,7 +49,8 @@ class RecordingController(
         onLocation = { location ->
             latestGpsFix = GpsFix(
                 location.latitude,
-                location.longitude
+                location.longitude,
+                SystemClock.elapsedRealtime()
             )
 
             upload?.location(
@@ -55,6 +59,7 @@ class RecordingController(
             )
 
             activity.runOnUiThread {
+                if (!closing) onGpsLocationChanged(location.latitude, location.longitude)
                 onStatusChanged(
                     "GPS 위치 수신 성공"
                 )
@@ -74,10 +79,28 @@ class RecordingController(
 
     private var sttReady = false
     // 컨트롤러 초기화
-    fun initialize(serverUrl: String? = null) {
-        if (closing) return
+    fun currentPosition(): ReMemoryClient.Position? {
+        if (activity.checkSelfPermission("pleos.car.permission.FUSED_LOCATION") !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            startGps()
+            return null
+        }
+        val fix = latestGpsFix ?: return null
+        if (SystemClock.elapsedRealtime() - fix.receivedAt > 30_000L) return null
+        return ReMemoryClient.Position(fix.latitude, fix.longitude)
+    }
 
-        upload = serverUrl?.let { ReTripUpload(it) }
+    fun enableUpload(serverUrl: String) {
+        if (closing || upload != null) return
+        val debug = (activity.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        val uploader = ReTripUpload(serverUrl, logJson = debug)
+        upload = uploader
+        currentPosition()?.let { uploader.location(it.latitude, it.longitude) }
+    }
+
+    fun initialize() {
+        if (closing) return
 
         talkingAbout.initialize(
             onReady = {

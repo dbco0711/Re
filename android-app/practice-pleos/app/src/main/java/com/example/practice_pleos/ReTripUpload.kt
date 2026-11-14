@@ -12,7 +12,7 @@ import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.Executors
 
-class ReTripUpload(private val baseUrl: String) : Closeable {
+class ReTripUpload(private val baseUrl: String, private val logJson: Boolean = false) : Closeable {
     private val startedAt = Instant.now().toString()
     private val tripStart = SystemClock.elapsedRealtime()
     private val clientTripId = UUID.randomUUID().toString()
@@ -110,7 +110,13 @@ class ReTripUpload(private val baseUrl: String) : Closeable {
             connection.readTimeout = 15000
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-            connection.outputStream.use { it.write(json.toString().toByteArray(Charsets.UTF_8)) }
+            val payload = json.toString()
+            if (logJson && path.endsWith("/memos")) {
+                payload.chunked(850).forEachIndexed { index, part ->
+                    Log.d("ReUploadJson", "POST $path part=" + (index + 1) + " $part")
+                }
+            }
+            connection.outputStream.use { it.write(payload.toByteArray(Charsets.UTF_8)) }
             val status = connection.responseCode
             if (status !in 200..299) throw HttpError(status)
             val body = connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
