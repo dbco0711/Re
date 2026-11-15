@@ -6,7 +6,7 @@
     android:focusableInTouchMode="true"
     android:layoutDirection="ltr">
 
-    <!-- Tags are left, top, right, bottom coordinates in the 1200 × 842 reference. -->
+    <!-- Tags are left, top, right, bottom coordinates in the 1700 × 1184 reference. -->
 
     <FrameLayout
         android:id="@+id/header_box"

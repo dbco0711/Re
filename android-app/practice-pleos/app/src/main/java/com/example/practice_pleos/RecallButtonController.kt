@@ -94,7 +94,23 @@ class RecallButtonController(
         val toggle = Button(activity).apply {
             isAllCaps = false
             text = "$heading  ▾"
+            textSize = 16f
+            setTextColor(android.graphics.Color.parseColor("#182438"))
             ViewCompat.setStateDescription(this, "접힘")
+
+            val density = resources.displayMetrics.density
+
+            val shape = android.graphics.drawable.GradientDrawable().apply {
+                setColor(android.graphics.Color.parseColor("#D6F0FF"))
+                cornerRadius = 14f * density
+            }
+
+            backgroundTintList = null
+            background = android.graphics.drawable.RippleDrawable(
+                android.content.res.ColorStateList.valueOf(0x22000000),
+                shape,
+                null
+            )
         }
         val detail = TextView(activity).apply {
             textSize = 18f
@@ -107,7 +123,15 @@ class RecallButtonController(
             toggle.text = if (expanded) "$heading  ▴" else "$heading  ▾"
             ViewCompat.setStateDescription(toggle, if (expanded) "펼쳐짐" else "접힘")
         }
-        content.addView(toggle)
+        if (content.childCount > 1) {
+            val density = content.resources.displayMetrics.density
+            val spacing = (12f * density + 0.5f).toInt()
+            content.addView(android.widget.Space(activity), 1, spacing)
+        }
+        content.addView(toggle, LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ))
         content.addView(detail)
     }
 

@@ -15,6 +15,8 @@ class ReRoadLayout(context: Context, attrs: AttributeSet?) : ViewGroup(context, 
     private val artwork = BitmapFactory.decodeResource(resources, R.drawable.re_road_reference)
     private val artworkPaint = Paint(Paint.FILTER_BITMAP_FLAG)
     private val artworkBounds = Rect()
+    private val referenceWidth = 1700
+    private val referenceHeight = 1184
     private lateinit var controlBounds: List<Rect>
 
     init {
@@ -76,6 +78,6 @@ class ReRoadLayout(context: Context, attrs: AttributeSet?) : ViewGroup(context, 
         canvas.drawBitmap(artwork, null, artworkBounds, artworkPaint)
     }
 
-    private fun scaleX(x: Int) = artworkBounds.left + x * artworkBounds.width() / artwork.width
-    private fun scaleY(y: Int) = artworkBounds.top + y * artworkBounds.height() / artwork.height
+    private fun scaleX(x: Int) = artworkBounds.left + x * artworkBounds.width() / referenceWidth
+    private fun scaleY(y: Int) = artworkBounds.top + y * artworkBounds.height() / referenceHeight
 }
